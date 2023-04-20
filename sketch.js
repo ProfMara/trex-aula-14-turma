@@ -1,81 +1,72 @@
-var soloSprite, soloImagem;
-//é aqui que cria a variável
-var trex, trexAnimacao;
+//é aqui que cria as variáveis
+var trex;
 var solo;
+var trexAnimacao;
+var soloImagem;
+var soloInvisivel;
 var nuvemImagem;
 
-//nessa função, carrega-se arquivos de mídia
-function preload() {
-    //é assim que carrega a animação
-    trexAnimacao = loadAnimation("trex1.png","trex2.png","trex3.png");
-    //carregar a imagem do solo
-    soloImagem = loadImage("solo.png");
-    //carregar a imagem da nuvem
+//essa função serve para carregar arquivos de mídia
+function preload() { 
     nuvemImagem = loadImage("nuvem.png");
-
+    soloImagem = loadImage("solo.png");
+    trexAnimacao = loadAnimation("trex1.png", "trex2.png","trex3.png");
 }
 
-
+//essa função executa os comandos apenas uma vez antes do jogo começar
 function setup() {
+    //cria a área de jogo
     createCanvas(600, 200);
-    //é aqui que cria as sprites
-    //solo
-    solo = createSprite(300,180,600, 20);
+ 
+    solo = createSprite(300,190,600,20);
+    //adicionar a imagem na sprite
     solo.addImage(soloImagem);
+    //manda o solo ir para a esquerda
     solo.velocityX = -3;
 
-    //solo invisível
-    soloInvisivel = createSprite(300,195,600,20);
+    soloInvisivel = createSprite(300,200,600,10);
     soloInvisivel.visible = false;
 
-    //trex
-    trex = createSprite(50,170,50,50);
+    trex = createSprite(50,190,50,50);
     trex.addAnimation("correndo",trexAnimacao);
     trex.scale=0.5;
-
-
 }
-
-
+//executa os comandos por todo o jogo
 function draw() {
-    //pinta o fundo de uma cor
-    background("white");
+    //pinta o fundo de branco
+    background("black");
 
-    //chama a função que cria as nuvens
-    criarNuvens();
-    //verifica se a pessoa apertou a tecla espaço
-    if(keyDown("space") && trex.isTouching(solo) ){
-        //dá velocidade para o trex voar
-        trex.velocityY = -10;
+    //checa se apertou espaço
+    if(keyDown("space") && trex.isTouching(solo)){
+        //se sim, determina a velocidade do trex
+        trex.velocityY = -10; 
     }
-
-    //esse código dá gravidade para o trex cair
-    trex.velocityY += 0.8;
-    //manda o trex colidir com o solo
+    //dá gravidade ao trex
+    trex.velocityY = trex.velocityY + 0.8;
+    //faz o trex colidir com o solo
     trex.collide(soloInvisivel);
-
-    //checa se o solo saiu da tela
+    
     if(solo.x < 0){
-        //se sim, ele volta para a metade do jogo 
-        //e cria um loop infinito
         solo.x = width/2;
     }
+    //chama a função criarNuvens
+    criarNuvens();
+    //cria números aleatórios
+    
 
     //desenha as sprites
     drawSprites();
 }
-//cria a função criarNuvens
+//adiciona a função criarNuvens
 function criarNuvens(){
-    //determina o que ocorre a cada 90 quadros
-    if(frameCount % 90 == 0){
-        //cria a sprite da nuvem em uma posição Y aleatória
-        var nuvem = createSprite(600,Math.round(random(20,100)),75,20);
-        //adiciona a imagem
-        nuvem.addImage(nuvemImagem);        
-        //define velocidade
+    //checa se frameCount é divisível por 50
+    if(frameCount % 50 == 0){
+        var nuvem = createSprite(600,Math.round(random(1,100)),75,25);
         nuvem.velocityX = -3;
-        //define o tamanho
+        nuvem.addImage(nuvemImagem);
+        //deixa o trex na frente da nuvem
+        trex.depth = nuvem.depth + 1;
+        //diminuir o tamanho da nuvem
         nuvem.scale = 0.5;
-
     }
 }
